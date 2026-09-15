@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پنل نقطه بهینه اکتشاف نفت | مهندس حسین لعلیان</title>
+    <!-- Chart.js & Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap');
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #0b0f19;
+            color: #e2e8f0;
+        }
+        .glow-border {
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .glow-text {
+            text-shadow: 0 0 10px rgba(52, 211, 153, 0.5);
+        }
+        .radar-grid {
+            background-image: radial-gradient(rgba(16, 185, 129, 0.15) 1px, transparent 0);
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- HEADER SECTION -->
+    <header class="bg-slate-900/90 backdrop-blur-md border-b border-emerald-500/30 sticky top-0 z-50 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-3 bg-emerald-950/80 border border-emerald-500/50 rounded-xl text-emerald-400">
+                    <i class="fa-solid fa-compass-drafting text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-black text-emerald-400 tracking-wide glow-text">
+                        پنل نقطه بهینه اکتشاف نفت
+                    </h1>
+                    <p class="text-xs text-slate-400 font-medium">
+                        طراحی و توسعه: <span class="text-emerald-300 font-bold">حسین لعلیان</span> (رتبه ۳۲ کنکور دکتری)
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3 bg-slate-800/80 px-4 py-2 rounded-lg border border-slate-700">
+                <i class="fa-solid fa-envelope text-emerald-400"></i>
+                <span class="text-xs md:text-sm font-mono text-slate-300">ai.algorithms.ballistics@gmail.com</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="max-w-7xl mx-auto px-4 py-6 w-full flex-grow space-y-6">
+
+        <!-- LEGAL & DEMO NOTICE DISCLAIMER -->
+        <section class="bg-amber-950/30 border-r-4 border-amber-500 p-4 rounded-xl text-amber-200 text-xs md:text-sm leading-relaxed shadow-lg">
+            <div class="flex items-start gap-3">
+                <i class="fa-solid fa-triangle-exclamation text-amber-400 text-xl mt-1"></i>
+                <div>
+                    <strong class="font-bold text-amber-300 text-base">بیانیه حقوقی و فنی سیستم (Demo Verification):</strong>
+                    <p class="mt-1">
+                        جهت ممانعت از کپی‌برداری غیرمجاز و حفظ حقوق مالکیت فکری، این نسخه ارائه‌شده صرفاً یک <span class="underline font-bold text-white">دمو با داده‌های نمونه و تقلیل‌یافته (Synthetic/Minimal)</span> می‌باشد. در صورت ثبت سفارش صنعتی، پنل نهایی به‌صورت تکاملی توسعه یافته و از طریق پروتکل‌های سخت‌افزاری صنعتی (HIL) به لبه‌های پردازشی واقعی (Real-Time Sensors Edge)، داده‌های زلزله‌نگاری سه‌بعدی و مدل‌های شبیه‌ساز Simulink متصل می‌گردد تا نقطه بهینه حفاری اکتشافی را با کمترین ضریب خطا محاسبه نماید.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- DASHBOARD GRID -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- CONTROL & ALGORITHM SELECTION PANEL -->
+            <div class="bg-slate-900/80 rounded-2xl p-5 glow-border space-y-5">
+                <div class="border-b border-slate-800 pb-3 flex justify-between items-center">
+                    <h2 class="font-bold text-lg text-emerald-400 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders"></i> پارامترها و الگوریتم‌های اکتشاف
+                    </h2>
+                    <span class="text-xs bg-emerald-950 text-emerald-400 px-2 py-1 rounded border border-emerald-800 font-mono">Simulink HIL Mode</span>
+                </div>
+
+                <!-- ALGORITHM SELECTOR -->
+                <div class="space-y-2">
+                    <label class="text-xs text-slate-300">الگوریتم بهینه‌یابی اکتشافی (Metaheuristics & AI):</label>
+                    <select id="algoSelect" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-sm text-emerald-300 focus:outline-none focus:border-emerald-500">
+                        <option value="pso-anfis">ترکیبی PSO + ANFIS (تخمین تخلخل و سازند)</option>
+                        <option value="ga-seismic">ژنتیک پیشرفته (GA + inversion لرزه‌ای)</option>
+                        <option value="hil-simulink">شبیه‌سازی زنده HIL با پردازش گرانوی‌سنجی</option>
+                    </select>
+                </div>
+
+                <!-- SLIDERS FOR GEOPHYSICAL DATA -->
+                <div class="space-y-4 text-xs">
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-400">عمق هدف اکتشافی (Depth Target):</span>
+                            <span id="depthVal" class="text-emerald-400 font-bold">3450 m</span>
+                        </div>
+                        <input type="range" id="depthSlider" min="1000" max="6000" value="3450" class="w-full accent-emerald-500 bg-slate-800 rounded">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-400">آنومالی گرانوی‌سنجی (Gravity Anomaly):</span>
+                            <span id="gravVal" class="text-emerald-400 font-bold font-mono">+12.4 mGal</span>
+                        </div>
+                        <input type="range" id="gravSlider" min="-50" max="50" value="12" class="w-full accent-emerald-500 bg-slate-800 rounded">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-slate-400">تخمین تخلخل سنگ مخزن (Porosity ANFIS):</span>
+                            <span id="poroVal" class="text-emerald-400 font-bold">14.8 %</span>
+                        </div>
+                        <input type="range" id="poroSlider" min="1" max="30" value="15" class="w-full accent-emerald-500 bg-slate-800 rounded">
+                    </div>
+                </div>
+
+                <!-- HIL & SIMULINK STATUS BOARDS -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3 font-mono text-xs">
+                    <div class="flex justify-between text-slate-400">
+                        <span>HIL Hardware Edge:</span>
+                        <span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle text-[8px] animate-pulse"></i> CONNECTED</span>
+                    </div>
+                    <div class="flex justify-between text-slate-400">
+                        <span>Simulink Solver:</span>
+                        <span class="text-cyan-400">Ode45 (Runge-Kutta)</span>
+                    </div>
+                    <div class="flex justify-between text-slate-400">
+                        <span>POS (احتمال موفقیت کشف):</span>
+                        <span id="posScore" class="text-emerald-300 font-bold">84.6%</span>
+                    </div>
+                </div>
+
+                <button id="runOptBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold py-3 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-microchip"></i> محاسبه نقطه بهینه اکتشاف (Run Optimization)
+                </button>
+            </div>
+
+            <!-- GEOPHYSICAL VISUALIZATION & OPTIMAL POINT CANVAS -->
+            <div class="lg:col-span-2 bg-slate-900/80 rounded-2xl p-5 glow-border flex flex-col justify-between space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <h2 class="font-bold text-lg text-emerald-400 flex items-center gap-2">
+                        <i class="fa-solid fa-map-location-dot"></i> مانیتورینگ سه‌بعدی و نقشه آنومالی اکتشافی
+                    </h2>
+                    <div class="text-xs text-slate-400">
+                        مختصات بهینه: <span id="coordsDisplay" class="text-emerald-300 font-mono font-bold">X: 542.12 | Y: 3120.85</span>
+                    </div>
+                </div>
+
+                <!-- CANVAS FOR SEISMIC / ANOMALY VISUALIZATION -->
+                <div class="relative w-full h-80 bg-slate-950 rounded-xl overflow-hidden border border-slate-800 radar-grid flex items-center justify-center">
+                    <canvas id="explorationCanvas" class="w-full h-full"></canvas>
+                    <div class="absolute top-3 right-3 bg-slate-900/80 px-3 py-1.5 rounded border border-slate-700 text-xs text-slate-300 font-mono">
+                        Seismic Inversion Profile v4.2
+                    </div>
+                </div>
+
+                <!-- METRICS METRIC CARDS -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <div class="text-slate-400 text-xs mb-1">احتمال تله ساختاری</div>
+                        <div id="metric1" class="text-emerald-400 font-bold font-mono text-base">91.2 %</div>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <div class="text-slate-400 text-xs mb-1">عمق بهینه حفاری</div>
+                        <div id="metric2" class="text-cyan-400 font-bold font-mono text-base">3,420 m</div>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <div class="text-slate-400 text-xs mb-1">خطای ANFIS (RMSE)</div>
+                        <div id="metric3" class="text-amber-400 font-bold font-mono text-base">0.0024</div>
+                    </div>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <div class="text-slate-400 text-xs mb-1">ریسک عدم قطعیت</div>
+                        <div id="metric4" class="text-emerald-400 font-bold font-mono text-base">پایین (Low)</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ANALYTICAL CHARTS SECTION -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- CHART 1: CONVERGENCE -->
+            <div class="bg-slate-900/80 p-5 rounded-2xl glow-border">
+                <h3 class="text-sm font-bold text-slate-200 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line text-emerald-400"></i> همگرایی الگوریتم فراابتکاری (Optimization Convergence)
+                </h3>
+                <div class="h-56">
+                    <canvas id="chartConvergence"></canvas>
+                </div>
+            </div>
+
+            <!-- CHART 2: RESERVOIR LITHOLOGY ANFIS -->
+            <div class="bg-slate-900/80 p-5 rounded-2xl glow-border">
+                <h3 class="text-sm font-bold text-slate-200 mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-layer-group text-cyan-400"></i> تحلیل لیتولوژی و جنس لایه‌ها (ANFIS Layer Analysis)
+                </h3>
+                <div class="h-56">
+                    <canvas id="chartLithology"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-4 px-4 text-center text-xs text-slate-500">
+        <p>طراحی شده جهت ارزیابی و مکان‌یابی بهینه نقطه‌ای اکتشاف نفت و گاز | تمامی حقوق محفوظ است © ۲۰۲۶</p>
+        <p class="mt-1 font-mono text-emerald-500/70">Developed by Houssein Lalian | Ballistic & AI Algorithms Specialist</p>
+    </footer>
+
+    <!-- LOGIC & CANVAS SCRIPT -->
+    <script>
+        // Interactive Controls & State Update
+        const depthSlider = document.getElementById('depthSlider');
+        const depthVal = document.getElementById('depthVal');
+        const gravSlider = document.getElementById('gravSlider');
+        const gravVal = document.getElementById('gravVal');
+        const poroSlider = document.getElementById('poroSlider');
+        const poroVal = document.getElementById('poroVal');
+
+        depthSlider.addEventListener('input', (e) => depthVal.innerText = e.target.value + ' m');
+        gravSlider.addEventListener('input', (e) => gravVal.innerText = (e.target.value > 0 ? '+' : '') + e.target.value + ' mGal');
+        poroSlider.addEventListener('input', (e) => poroVal.innerText = e.target.value + ' %');
+
+        // Canvas Rendering for Exploration Anomaly Map & Optimal Point Target
+        const canvas = document.getElementById('explorationCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+            drawMap();
+        }
+
+        let targetX = 0.6;
+        let targetY = 0.4;
+        let pulseRadius = 0;
+
+        function drawMap() {
+            const w = canvas.width;
+            const h = canvas.height;
+            ctx.clearRect(0, 0, w, h);
+
+            // Draw Layer Contours (Seismic Layers Simulation)
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                ctx.strokeStyle = `rgba(16, 185, 129, ${0.1 + i * 0.08})`;
+                ctx.lineWidth = 2;
+                ctx.moveTo(0, h * (0.3 + i * 0.12));
+                for (let x = 0; x <= w; x += 20) {
+                    let y = h * (0.3 + i * 0.12) + Math.sin((x + i * 50) * 0.015) * 20;
+                    ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            }
+
+            // Target Optimal Exploration Drilling Spot
+            const tx = w * targetX;
+            const ty = h * targetY;
+
+            // Pulse Effect
+            pulseRadius = (pulseRadius + 0.5) % 30;
+            ctx.beginPath();
+            ctx.arc(tx, ty, pulseRadius, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(52, 211, 153, ${1 - pulseRadius / 30})`;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Core Point
+            ctx.beginPath();
+            ctx.arc(tx, ty, 6, 0, Math.PI * 2);
+            ctx.fillStyle = '#10b981';
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Crosshair Lines
+            ctx.setLineDash([4, 4]);
+            ctx.strokeStyle = 'rgba(52, 211, 153, 0.5)';
+            ctx.beginPath();
+            ctx.moveTo(tx, 0); ctx.lineTo(tx, h);
+            ctx.moveTo(0, ty); ctx.lineTo(w, ty);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Label
+            ctx.fillStyle = '#34d399';
+            ctx.font = '12px Vazirmatn, sans-serif';
+            ctx.fillText('نقطه بهینه اکتشاف (Optimal Drilling Target)', tx + 12, ty - 12);
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function animate() {
+            drawMap();
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // Chart 1: Metaheuristic Convergence Chart
+        const ctx1 = document.getElementById('chartConvergence').getContext('2d');
+        const chart1 = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: Array.from({length: 20}, (_, i) => `تکرار ${i+1}`),
+                datasets: [{
+                    label: 'تابع هدف (Fitness Value)',
+                    data: [0.32, 0.45, 0.58, 0.64, 0.72, 0.79, 0.83, 0.88, 0.91, 0.93, 0.94, 0.95, 0.955, 0.96, 0.962, 0.965, 0.967, 0.968, 0.97, 0.97],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Vazirmatn' } } } },
+                scales: {
+                    x: { ticks: { color: '#64748b' }, grid: { color: '#1e293b' } },
+                    y: { ticks: { color: '#64748b' }, grid: { color: '#1e293b' } }
+                }
+            }
+        });
+
+        // Chart 2: ANFIS Reservoir Lithology Analysis
+        const ctx2 = document.getElementById('chartLithology').getContext('2d');
+        const chart2 = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: ['ماسه سنگ (Sandstone)', 'آهک (Limestone)', 'دولومیت (Dolomite)', 'شیل (Shale)', 'انیدرید (Anhydrite)'],
+                datasets: [{
+                    label: 'احتمال حضور در لایه هدف (%)',
+                    data: [65, 20, 10, 3, 2],
+                    backgroundColor: ['#10b981', '#06b6d4', '#f59e0b', '#64748b', '#8b5cf6']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Vazirmatn' } } } },
+                scales: {
+                    x: { ticks: { color: '#64748b' }, grid: { color: '#1e293b' } },
+                    y: { ticks: { color: '#64748b' }, grid: { color: '#1e293b' } }
+                }
+            }
+        });
+
+        // Optimization Trigger Button Simulation
+        document.getElementById('runOptBtn').addEventListener('click', () => {
+            targetX = 0.3 + Math.random() * 0.4;
+            targetY = 0.3 + Math.random() * 0.4;
+            
+            const newPos = (80 + Math.random() * 15).toFixed(1);
+            document.getElementById('posScore').innerText = newPos + '%';
+            document.getElementById('metric1').innerText = (88 + Math.random() * 8).toFixed(1) + ' %';
+            document.getElementById('metric3').innerText = (0.0010 + Math.random() * 0.002).toFixed(4);
+            document.getElementById('coordsDisplay').innerText = `X: ${(400 + Math.random() * 300).toFixed(2)} | Y: ${(2800 + Math.random() * 500).toFixed(2)}`;
+            
+            alert('محاسبات الگوریتم فراابتکاری و ANFIS نهایی شد. نقطه بهینه جدید روی نقشه ثبت گردید.');
+        });
+    </script>
+</body>
+</html>
